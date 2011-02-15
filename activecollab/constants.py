@@ -1,6 +1,7 @@
 # These are the 'top level' commands available
-AC_COMMANDS = ('projects', 'people', 'discussions', 'calendar')
-AC_SUBCOMMAND = ('tickets', 'milestones', 'files', 'pages')
+AC_COMMANDS = ('projects', 'people', 'calendar')
+AC_SUBCOMMAND = ('tickets', 'discussions', 'milestones', 'files',
+    'pages', 'time', 'comment')
 
 # The following is a list of sub elements of the main
 # command XML which is returned
@@ -9,6 +10,11 @@ AC_COMMAND_ELEMENT = {
     'people': 'company',
     'discussions': 'topic',
     'tickets': 'ticket',
+    'milestones': 'milestone',
+    'time': 'time_record',
+    'page': 'category',
+    'comments': 'comment',
+    'files': 'file',
 }
 
 # These fields are common throughout XML responses so we
