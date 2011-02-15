@@ -1,7 +1,7 @@
 import urllib
 from xml.dom.minidom import parse
 from activecollab.settings import API_KEY, AC_URL
-from activecollab.constants import AC_COMMANDS, AC_SUBCOMMAND
+from activecollab.constants import *
 from activecollab.exceptions import ACCommandException
 
 class ACRequest(object):
@@ -44,7 +44,11 @@ class ACRequest(object):
         items = xml.getElementsByTagName(AC_SUBCOMMAND[self.command])
 
         for item in items:
+            output = ''
             for node in item.childNodes:
-                if node.localName == 'name':
-                    print node.childNodes[0].nodeValue
+                if node.localName in AC_BASE_FIELDS:
+                    output += node.childNodes[0].nodeValue + AC_FIELD_SEP
+
+            if output:
+                print output.rstrip(AC_FIELD_SEP)
 

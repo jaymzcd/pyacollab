@@ -1,5 +1,6 @@
 from activecollab.library import ACRequest
 
-req = ACRequest('projects')
+req = ACRequest('people')
+print req.command_url
 req.execute()
 
