@@ -27,7 +27,10 @@ class ACRequest(object):
 
         self.valid_fields = AC_BASE_FIELDS
         if self.subcommand:
-            self.valid_fields += AC_SUB_FIELDS[self.subcommand]
+            try:
+                self.valid_fields += AC_SUB_FIELDS[self.subcommand]
+            except KeyError:
+                pass # no need to fail here if not defined
 
     @property
     def base_url(self):
