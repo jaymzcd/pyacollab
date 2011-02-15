@@ -12,6 +12,10 @@ class ACRequest(object):
     def __init__(self, command, item_id=None, subcommand=None, sub_id=None, **kwargs):
         if (command not in AC_COMMANDS):
             raise ACCommandException('Not a valid command')
+        if subcommand and (subcommand not in AC_SUBCOMMAND):
+            raise ACCommandException('Not a valid subcommand')
+        if (subcommand and not item_id):
+            raise ACCommandException('Subcommands require a top level id')
 
         self.command = command
         self.item_id = item_id
