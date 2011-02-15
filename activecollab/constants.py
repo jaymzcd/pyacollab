@@ -21,8 +21,11 @@ AC_COMMAND_ELEMENT = {
 # grab these for all items as a good start
 AC_BASE_FIELDS = ('id', 'name', 'permalink')
 AC_SUB_FIELDS = {
-    'tickets': ('ticket_id',)
+    'tickets': ('ticket_id', 'body')
 }
 
 # Used in printing output
 AC_FIELD_SEP = ': '
+
+# Fields which return HTML we want to flag
+AC_HTML_FIELDS = ('body',)
