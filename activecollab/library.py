@@ -9,14 +9,21 @@ class ACRequest(object):
         commands with a given API key. The returned XML is
         then parsed and returned in usable form """
 
-    def __init__(self, command, **kwargs):
+    def __init__(self, command, item_id=None, subcommand=None, sub_id=None, **kwargs):
         if (command not in AC_COMMANDS):
             raise ACCommandException('Not a valid command')
 
         self.command = command
+        self.item_id = item_id
+        self.sub_id = sub_id
+        self.subcommand = subcommand
         self.api_key = kwargs.get('api_key', API_KEY)
         self.ac_url = kwargs.get('ac_url', AC_URL)
         self.params = urllib.urlencode(kwargs.get('params', dict()))
+
+        self.valid_fields = AC_BASE_FIELDS
+        if self.subcommand:
+            self.valid_fields += AC_SUB_FIELDS[self.subcommand]
 
     @property
     def base_url(self):
@@ -28,7 +35,19 @@ class ACRequest(object):
     def command_url(self):
         """ This url is the base of all executed commands """
         url = self.base_url + self.command
+
+        if self.item_id:
+            # A particular project/person/comany etc id
+            url += '/' + str(self.item_id)
+        if self.subcommand:
+            # This is used to get tickets or milestones for example
+            url += '/' + self.subcommand
+        if self.sub_id:
+            url += '/' + self.sub_id
+
         if self.params:
+            # Extra parameters via a dict which may be passed
+            # outside of our base command url
             return '%s&%s' % (url, self.params)
         else:
             return url
@@ -41,12 +60,16 @@ class ACRequest(object):
             raise ACCommandException('Could not execute command')
 
         xml = parse(raw_xml)
-        items = xml.getElementsByTagName(AC_SUBCOMMAND[self.command])
+
+        if self.subcommand:
+            items = xml.getElementsByTagName(AC_COMMAND_ELEMENT[self.subcommand])
+        else:
+            items = xml.getElementsByTagName(AC_COMMAND_ELEMENT[self.command])
 
         for item in items:
             output = ''
             for node in item.childNodes:
-                if node.localName in AC_BASE_FIELDS:
+                if node.localName in self.valid_fields:
                     output += node.childNodes[0].nodeValue + AC_FIELD_SEP
 
             if output:
