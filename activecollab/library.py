@@ -75,9 +75,11 @@ class ACRequest(object):
 
         output = list()
         for item in items:
+            item_str = ''
             for node in item.childNodes:
                 if node.localName in self.valid_fields:
-                    output.append(node.childNodes[0].nodeValue + AC_FIELD_SEP)
+                    item_str += node.childNodes[0].nodeValue + AC_FIELD_SEP
+            output.append(item_str)
 
         return [o.rstrip(AC_FIELD_SEP) for o in output]
 
