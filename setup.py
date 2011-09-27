@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='pyacollab',
-    version='0.2.0',
+    version='0.3.0',
     description='Library to interact with Active Collab, a Basecamp like PM tool',
     author='Jaymz Campbell',
     author_email='jaymz@jaymz.eu',
