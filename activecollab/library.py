@@ -73,12 +73,11 @@ class ACRequest(object):
         else:
             items = xml.getElementsByTagName(AC_COMMAND_ELEMENT[self.command])
 
+        output = list()
         for item in items:
-            output = ''
             for node in item.childNodes:
                 if node.localName in self.valid_fields:
-                    output += node.childNodes[0].nodeValue + AC_FIELD_SEP
+                    output.append(node.childNodes[0].nodeValue + AC_FIELD_SEP)
 
-            if output:
-                print output.rstrip(AC_FIELD_SEP)
+        return [o.rstrip(AC_FIELD_SEP) for o in output]
 
