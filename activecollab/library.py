@@ -1,4 +1,5 @@
 import urllib
+import re
 from xml.dom.minidom import parse
 from activecollab.settings import API_KEY, AC_URL
 from activecollab.constants import *
@@ -13,8 +14,8 @@ class ACRequest(object):
         if (command not in AC_COMMANDS):
             raise ACCommandException('Not a valid command')
         if subcommand and (subcommand not in AC_SUBCOMMAND):
-            raise ACCommandException('Not a valid subcommand')
-        if (subcommand and not item_id):
+            raise ACCommandException('Not a valid subcommand %s'% str(AC_SUBCOMMAND))
+        if (subcommand and not item_id): 
             raise ACCommandException('Subcommands require a top level id')
 
         self.command = command
@@ -24,6 +25,9 @@ class ACRequest(object):
         self.api_key = kwargs.get('api_key', API_KEY)
         self.ac_url = kwargs.get('ac_url', AC_URL)
         self.params = urllib.urlencode(kwargs.get('params', dict()))
+        
+        # quick n easy tag clean - nuffin' fancy
+        self.striptags = re.compile(r'<.*?>')
 
         self.valid_fields = AC_BASE_FIELDS
         if self.subcommand:
@@ -77,8 +81,19 @@ class ACRequest(object):
         for item in items:
             item_str = ''
             for node in item.childNodes:
-                if node.localName in self.valid_fields:
-                    item_str += node.childNodes[0].nodeValue + AC_FIELD_SEP
+
+                if self.sub_id and self.subcommand == 'tickets': 
+                    # If we have a ticket id and we're actually looking at a ticket
+                    # then show some more useful info instead of a list
+                    if node.localName == 'body':
+                        item_str += self.striptags.sub('', node.childNodes[0].nodeValue)
+                        break
+
+                else:
+                    # 'standard' output of the fields so for the current block
+                    if node.localName in self.valid_fields:
+                        item_str += node.childNodes[0].nodeValue + AC_FIELD_SEP
+
             output.append(item_str)
 
         return [o.rstrip(AC_FIELD_SEP) for o in output]
